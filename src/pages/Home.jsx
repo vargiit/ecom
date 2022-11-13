@@ -15,18 +15,21 @@ import {
 import { Container, maxWidth } from "@mui/system";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../feature/cart-slice";
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
+  const products = useSelector((state) => state.products);
   const theme = useTheme();
-  async function fetchAllProducts() {
-    const response = await axios.get("https://fakestoreapi.com/products");
-    setProducts(response.data);
+  const dispatch = useDispatch();
+
+  if (products?.value.length) {
+    dispatch();
   }
 
-  useEffect(() => {
-    fetchAllProducts();
-  }, []);
+  function addProductToCart(product) {
+    dispatch(addToCart({ product, quantity: 1 }));
+  }
 
   return (
     <Container sx={{ py: 8 }} maxWidth="lg">
@@ -62,8 +65,8 @@ const Home = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "1",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "1",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {title}
@@ -76,8 +79,8 @@ const Home = () => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "2",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "2",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {description}
@@ -92,7 +95,19 @@ const Home = () => {
                   alignSelf: "center",
                 }}
               >
-                <Button variant="contained">
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    addProductToCart({
+                      title,
+                      image,
+                      price,
+                      rating,
+                      id,
+                      description,
+                    })
+                  }
+                >
                   <ShoppingCartSharp />
                   Add to cart
                 </Button>
